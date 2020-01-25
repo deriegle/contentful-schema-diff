@@ -20,11 +20,11 @@ interface IContentTypeJSON {
 }
 
 export default class ContentType {
-  public id: string
-  public name: string
-  public description: string | null
-  public displayField: string | null
-  public fields: ContentField[]
+  public readonly id: string
+  public readonly name: string
+  public readonly description: string | null
+  public readonly displayField: string | null
+  public readonly fields: ContentField[]
 
   constructor({
     id,

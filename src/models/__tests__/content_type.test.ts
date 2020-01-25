@@ -1,10 +1,24 @@
 import { FieldType } from '../../model'
 import ContentField from '../content_field'
+import ContentLink, { ContentRelationship } from '../content_link'
 import ContentType from '../content_type'
+import AssetLink from '../asset_link'
 
 const contentType = new ContentType({
   id: 'hero',
   name: 'Hero',
+  fields: [
+    new ContentField({
+      id: 'test',
+      name: 'Test',
+      type: FieldType.Symbol,
+    }),
+  ],
+})
+
+const imageTout = new ContentType({
+  id: 'imageTout',
+  name: 'Image Tout',
   fields: [
     new ContentField({
       id: 'test',
@@ -26,6 +40,37 @@ describe('Content Type', () => {
   it('getField works', () => {
     expect(contentType.getField('test')).toBeInstanceOf(ContentField)
     expect(contentType.getField('blah')).toBeNull()
+  })
+
+  it('allows ContentLink, AssetLink and ContentField fields', () => {
+    const subject = new ContentType({
+      id: 'imageToutSection',
+      name: 'Image Tout Section',
+      fields: [
+        new ContentField({
+          id: 'headline',
+          name: 'Headline Text',
+          type: FieldType.Symbol,
+          required: true,
+        }),
+        new ContentLink({
+          id: 'imageTouts',
+          name: 'Image Touts',
+          contentType: imageTout,
+          relationship: ContentRelationship.hasMany,
+        }),
+        new AssetLink({
+          id: 'image',
+          name: 'Image',
+          relationship: ContentRelationship.hasOne,
+        }),
+      ],
+    })
+
+    expect(subject.fields.length).toBe(3)
+    expect(subject.getField('headline')).toBeInstanceOf(ContentField)
+    expect(subject.getField('imageTouts')).toBeInstanceOf(ContentLink)
+    expect(subject.getField('image')).toBeInstanceOf(AssetLink)
   })
 
   it('toJSON returns correctly', () => {
