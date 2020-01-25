@@ -5,7 +5,7 @@ import {
   isSimpleDiff,
 } from './diff'
 import { IContentType, IField } from './model'
-import { IContext } from './runners'
+import { IContext } from './runners/index'
 import { dump } from './utils/object'
 import { camelCase } from './utils/string'
 
@@ -56,7 +56,7 @@ ${colorize(fieldsDiff, { color: false })} */
     { field: IField; diff: DiffObj<IField> } | null
   >()
 
-  let fromFieldIndex = 0
+  // let fromFieldIndex = 0
   let toFieldIndex = 0
 
   fieldsDiff.forEach((item) => {
@@ -80,7 +80,7 @@ ${colorize(fieldsDiff, { color: false })} */
             'Diff produced a "-" with a diff obj:\n' + JSON.stringify(item),
           )
         }
-        fromFieldIndex++
+        // fromFieldIndex++
         break
       case '~':
         if (val && isDiffObj(val)) {
@@ -93,11 +93,11 @@ ${colorize(fieldsDiff, { color: false })} */
             'Diff produced a "~" with a non-diff obj:\n' + JSON.stringify(item),
           )
         }
-        fromFieldIndex++
+        // fromFieldIndex++
         toFieldIndex++
         break
       default:
-        fromFieldIndex++
+        // fromFieldIndex++
         toFieldIndex++
 
         break
