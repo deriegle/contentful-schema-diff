@@ -1,16 +1,13 @@
 import {
-  Diff,
   DiffArray,
   DiffObj,
-  isDiff,
-  isDiffItem,
   isDiffObj,
   isSimpleDiff,
 } from './diff'
 import { IContentType, IField } from './model'
 import { IContext } from './runners'
-import { extendPrototypes } from './utils'
-extendPrototypes()
+import { dump } from './utils/object'
+import { camelCase } from './utils/string'
 
 const { diff } = require('json-diff')
 const { colorize } = require('json-diff/lib/colorize')
@@ -21,7 +18,7 @@ export async function writeModify(
   write: (chunk: string) => Promise<any>,
   context: IContext,
 ): Promise<void> {
-  const v = from.sys.id.camelCase()
+  const v = camelCase(from.sys.id)
   const fromTypeDef = Object.assign({}, to)
   delete fromTypeDef.fields
   delete fromTypeDef.sys
@@ -42,7 +39,7 @@ export async function writeModify(
   `)
   } else {
     await write(`
-  var ${v} = migration.editContentType('${from.sys.id}', ${toTypeDef.dump()})
+  var ${v} = migration.editContentType('${from.sys.id}', ${dump(toTypeDef)})
 `)
   }
   context.varname = v
@@ -147,7 +144,7 @@ ${colorize(fieldsDiff, { color: false })} */
     delete fieldDef.id
 
     let create = `
-    ${v}.createField('${field.id}', ${fieldDef.dump()})
+    ${v}.createField('${field.id}', ${dump(fieldDef)})
   `
     create += moveField(field)
 
@@ -186,7 +183,7 @@ ${colorize(fieldsDiff, { color: false })} */
     Object.keys(fieldDiff).forEach((key) => {
       const newValue = (toField as any)[key]
       base += `
-        .${key}(${newValue.dump()})`
+        .${key}(${dump(newValue)})`
     })
 
     return base + '\n'

@@ -1,3 +1,4 @@
+import { FieldType } from '../model'
 import { writeModify } from '../modify'
 import { IContext } from '../runners'
 import { fakeContentType, fakeField } from '../test-support'
@@ -12,7 +13,7 @@ const fromType = fakeContentType(
   fakeField({
     id: 'topButton',
     name: 'Top Button',
-    type: 'Link',
+    type: FieldType.Link,
     validations: [
       {
         linkContentType: ['menuButton'],
@@ -24,15 +25,15 @@ const fromType = fakeContentType(
   fakeField({
     id: 'movedField',
     name: 'Moved Field',
-    type: 'Number',
+    type: FieldType.Number,
     required: true,
   }),
   fakeField({
     id: 'items',
     name: 'Items',
-    type: 'Array',
+    type: FieldType.Array,
     items: {
-      type: 'Link',
+      type: FieldType.Link,
       validations: [
         {
           range: { min: 1, max: 4 },
@@ -48,7 +49,7 @@ const fromType = fakeContentType(
   fakeField({
     id: 'sideMenu',
     name: 'Side Menu',
-    type: 'Link',
+    type: FieldType.Link,
     validations: [
       {
         linkContentType: ['menu'],
@@ -64,25 +65,25 @@ const toType = fakeContentType(
   fakeField({
     id: 'name',
     name: 'Menu Name',
-    type: 'Text',
+    type: FieldType.Text,
     required: true,
   }),
   fakeField({
     id: 'movedField',
     name: 'Moved Field',
-    type: 'Number',
+    type: FieldType.Number,
     validations: [{ in: [0, 1, 2] }],
   }),
   fakeField({
     id: 'newField',
     name: 'New Field',
-    type: 'Symbol',
+    type: FieldType.Symbol,
     required: true,
   }),
   fakeField({
     id: 'topButton',
     name: 'Top Button',
-    type: 'Link',
+    type: FieldType.Link,
     validations: [
       {
         linkContentType: ['menuButton'],
@@ -94,10 +95,10 @@ const toType = fakeContentType(
   fakeField({
     id: 'items',
     name: 'Items',
-    type: 'Array',
+    type: FieldType.Array,
     disabled: true,
     items: {
-      type: 'Link',
+      type: FieldType.Link,
       validations: [
         {
           range: { min: 1, max: 5 },

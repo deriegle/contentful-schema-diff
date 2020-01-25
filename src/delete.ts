@@ -1,7 +1,12 @@
 import { IContext } from './runners'
+import { AsyncWrite } from './runners/async_writer'
 
-export function writeDelete(id: string, write: (chunk: string) => Promise<any>, context?: IContext): Promise<void> {
-  return write(`
-  migration.deleteContentType('${id}')
-`)
+export class DeleteContentType {
+  public static writeDelete(id: string, write: AsyncWrite, context?: IContext): Promise<void> {
+    return write(`
+    migration.deleteContentType('${id}')
+  `)
+  }
 }
+
+export const writeDelete = DeleteContentType.writeDelete
