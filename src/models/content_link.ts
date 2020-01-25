@@ -10,7 +10,8 @@ export enum ContentRelationship {
 interface IContentLink {
   id: string,
   name: string,
-  contentType: ContentType,
+  contentType?: ContentType,
+  contentTypes?: ContentType[],
   relationship: ContentRelationship
   validations?: IValidation[],
   localized?: boolean,
@@ -31,7 +32,7 @@ export default class ContentLink {
   public readonly appearance: IContentFieldAppearance | null
   public readonly linkType: 'Entry' = 'Entry'
   public readonly relationship: {
-    contentType: ContentType,
+    contentType: ContentType | null,
     type: ContentRelationship,
   }
 
@@ -63,13 +64,13 @@ export default class ContentLink {
     this.appearance = appearance || null
     this._items = items || null
     this.relationship = {
-      contentType,
+      contentType: contentType || null,
       type: relationship,
     }
   }
 
   public get validations(): IValidation[] {
-    if (this.isArray) { return this._validations }
+    if (this.isArray || !this.relationship.contentType) { return this._validations }
 
     return this._validations.concat([
       {
@@ -92,15 +93,19 @@ export default class ContentLink {
   public get items(): IContentFieldItems | null {
     if (!this.isArray) { return null }
 
-    return Object.assign<object, IContentFieldItems>(this._items || {}, {
+    const validations = this._items?.validations || []
+
+    if (this.relationship.contentType) {
+      validations.push({
+        linkContentType: [this.relationship.contentType.id],
+      })
+    }
+
+    return {
       linkType: this.linkType,
       type: FieldType.Link,
-      validations: [
-        {
-          linkContentType: [this.relationship.contentType.id],
-        },
-      ],
-    })
+      validations,
+    }
   }
 
   public get options() {

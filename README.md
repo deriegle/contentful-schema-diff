@@ -247,3 +247,58 @@ export = function(migration : Migration) {
 
 }
 ```
+
+## Classes have been added to model your Contentful data and they are used to inform Contentful of model changes
+
+Example:
+
+```js
+// Page.js
+import { ContentType, ContentField } from '<this-package>';
+
+export const RichTextSection = new ContentType({
+  id: 'richTextSection',
+  name: 'Rich Text Section',
+  fields: [
+    new ContentField({
+      id: 'content',
+      name: 'Rich Text Content',
+      type: ContentField.RichText,
+      required: true,
+    }),
+  ],
+})
+
+```
+
+```js
+// Page.js
+import { ContentType, FieldType, ContentField, ContentRelationship } from '<this-package>';
+import RichTextSection from './rich-text-section';
+
+export const Page = new ContentType({
+  id: 'page',
+  name: 'Page',
+  description: 'Basic Page type',
+  fields: [
+    new ContentField({
+      id: 'title',
+      name: 'Page Title',
+      type: FieldType.Symbol,
+      required: true,
+    }),
+    new ContentLink({
+      id: 'blocks',
+      name: 'Component Area',
+      description: 'Area to build the rest of your components',
+      contentTypes: [ 
+        // Add your content types, that you want to be able to link.
+        // The validation will be added automatically when you create your migrations
+        RichTextSection,
+      ],
+      relationship: ContentRelationship.hasMany,
+      required: true,
+    })
+  ],
+})
+```
