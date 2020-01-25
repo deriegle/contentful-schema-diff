@@ -44,6 +44,8 @@ describe('Content Type', () => {
           type: contentType.fields[0].type,
           omitted: contentType.fields[0].omitted,
           required: contentType.fields[0].required,
+          items: contentType.fields[0].items,
+          linkType: contentType.fields[0].linkType,
           validations: contentType.fields[0].validations,
           disabled: contentType.fields[0].disabled,
           localized: contentType.fields[0].localized,

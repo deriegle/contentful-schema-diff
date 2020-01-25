@@ -14,7 +14,9 @@ export interface IContentFieldJSON {
   name: string
   type: string
   localized: boolean
+  linkType: 'Entry' | 'Asset' | null
   required: boolean
+  items: IContentFieldItems | null
   validations: IValidation[]
   disabled: boolean
   omitted: boolean
@@ -84,7 +86,9 @@ export default class ContentField {
       omitted: this.omitted,
       required: this.required,
       validations: this.validations,
+      linkType: this.linkType,
       type: this.type.toString(),
+      items: this.items,
       localized: this.localized,
       disabled: this.disabled,
     }
