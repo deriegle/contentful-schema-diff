@@ -1,5 +1,5 @@
 import { writeCreate } from '../create'
-import { IContentType } from '../model'
+import { IContentType, FieldType } from '../model'
 
 const contentType: IContentType = {
   sys: {
@@ -56,7 +56,7 @@ const contentType: IContentType = {
     {
       id: 'name',
       name: 'Menu Name',
-      type: 'Symbol',
+      type: FieldType.Symbol,
       localized: false,
       required: true,
       validations: [],
@@ -66,7 +66,7 @@ const contentType: IContentType = {
     {
       id: 'topButton',
       name: 'Top Button',
-      type: 'Link',
+      type: FieldType.Link,
       localized: false,
       required: false,
       validations: [
@@ -82,14 +82,14 @@ const contentType: IContentType = {
     {
       id: 'items',
       name: 'Items',
-      type: 'Array',
+      type: FieldType.Array,
       localized: false,
       required: false,
       validations: [],
       disabled: false,
       omitted: false,
       items: {
-        type: 'Link',
+        type: FieldType.Link,
         validations: [
           {
             linkContentType: ['menu', 'menuButton'],
@@ -102,7 +102,7 @@ const contentType: IContentType = {
     {
       id: 'sideMenu',
       name: 'Side Menu',
-      type: 'Link',
+      type: FieldType.Link,
       localized: false,
       required: false,
       validations: [
