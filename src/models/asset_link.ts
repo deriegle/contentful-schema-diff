@@ -1,27 +1,24 @@
 import { FieldType, IContentFieldItems, IValidation } from '../model'
 import { IContentFieldAppearance, IContentFieldJSON } from './content_field'
-import ContentType from './content_type'
 
 export enum ContentRelationship {
   hasOne,
   hasMany,
 }
 
-interface IContentLink {
+interface IAssetLink {
   id: string,
   name: string,
-  contentType: ContentType,
   relationship: ContentRelationship
   validations?: IValidation[],
   localized?: boolean,
   required?: boolean,
   disabled?: boolean,
   omitted?: boolean,
-  items?: IContentFieldItems,
   appearance?: IContentFieldAppearance,
 }
 
-export default class ContentLink {
+export default class AssetLink {
   public readonly id: string
   public readonly name: string
   public readonly required: boolean
@@ -29,78 +26,51 @@ export default class ContentLink {
   public readonly localized: boolean
   public readonly omitted: boolean
   public readonly appearance: IContentFieldAppearance | null
-  public readonly linkType: 'Entry' = 'Entry'
-  public readonly relationship: {
-    contentType: ContentType,
-    type: ContentRelationship,
-  }
-
-  // tslint:disable: variable-name
-  private _items: IContentFieldItems | null
-  private _validations: IValidation[]
-  // tslint:enable: variable-name
+  public readonly linkType: 'Asset' = 'Asset'
+  public readonly relationship: ContentRelationship
+  public readonly validations: IValidation[]
 
   constructor({
     id,
     name,
-    contentType,
     relationship,
     required,
     omitted,
     disabled,
     localized,
     validations,
-    items,
     appearance,
-  }: IContentLink) {
+  }: IAssetLink) {
     this.id = id
     this.name = name
     this.required = required || false
     this.omitted = omitted || false
     this.disabled = disabled || false
     this.localized = localized || false
-    this._validations = validations || []
+    this.validations = validations || []
     this.appearance = appearance || null
-    this._items = items || null
-    this.relationship = {
-      contentType,
-      type: relationship,
-    }
-  }
-
-  public get validations(): IValidation[] {
-    if (this.isArray) { return this._validations }
-
-    return this._validations.concat([
-      {
-        linkContentType: [this.relationship.contentType.id],
-      },
-    ])
+    this.relationship = relationship
   }
 
   public get type(): FieldType {
-    switch (this.relationship.type) {
+    switch (this.relationship) {
       case ContentRelationship.hasMany:
         return FieldType.Array
       case ContentRelationship.hasOne:
         return FieldType.Link
       default:
-        return this.relationship.type as never
+        return this.relationship as never
     }
   }
 
   public get items(): IContentFieldItems | null {
     if (!this.isArray) { return null }
 
-    return Object.assign<object, IContentFieldItems>(this._items || {}, {
+    return {
       linkType: this.linkType,
       type: FieldType.Link,
-      validations: [
-        {
-          linkContentType: [this.relationship.contentType.id],
-        },
-      ],
-    })
+      validations: [],
+    }
   }
 
   public get options() {

@@ -2,6 +2,7 @@ import { FieldType } from '../../model'
 import ContentField from '../content_field'
 import ContentLink, { ContentRelationship } from '../content_link'
 import ContentType from '../content_type'
+import AssetLink from '../asset_link'
 
 const contentType = new ContentType({
   id: 'hero',
@@ -41,7 +42,7 @@ describe('Content Type', () => {
     expect(contentType.getField('blah')).toBeNull()
   })
 
-  it('allows ContentLink and ContentField fields', () => {
+  it('allows ContentLink, AssetLink and ContentField fields', () => {
     const subject = new ContentType({
       id: 'imageToutSection',
       name: 'Image Tout Section',
@@ -58,12 +59,18 @@ describe('Content Type', () => {
           contentType: imageTout,
           relationship: ContentRelationship.hasMany,
         }),
+        new AssetLink({
+          id: 'image',
+          name: 'Image',
+          relationship: ContentRelationship.hasOne,
+        }),
       ],
     })
 
-    expect(subject.fields.length).toBe(2)
+    expect(subject.fields.length).toBe(3)
     expect(subject.getField('headline')).toBeInstanceOf(ContentField)
     expect(subject.getField('imageTouts')).toBeInstanceOf(ContentLink)
+    expect(subject.getField('image')).toBeInstanceOf(AssetLink)
   })
 
   it('toJSON returns correctly', () => {

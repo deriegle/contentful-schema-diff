@@ -37,17 +37,17 @@ interface IContentField {
 }
 
 export default class ContentField {
-  public id: string
-  public name: string
-  public type: FieldType
-  public validations: IValidation[]
-  public localized: boolean
-  public required: boolean
-  public disabled: boolean
-  public omitted: boolean
-  public linkType: 'Entry' | 'Asset' | null
-  public items: IContentFieldItems | null
-  public appearance: IContentFieldAppearance | null
+  public readonly id: string
+  public readonly name: string
+  public readonly type: FieldType
+  public readonly validations: IValidation[]
+  public readonly localized: boolean
+  public readonly required: boolean
+  public readonly disabled: boolean
+  public readonly omitted: boolean
+  public readonly linkType: 'Entry' | 'Asset' | null
+  public readonly items: IContentFieldItems | null
+  public readonly appearance: IContentFieldAppearance | null
 
   constructor({
     id,
