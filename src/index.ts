@@ -41,21 +41,17 @@ if (!argv.out) {
     argv.out = './'
   }
 }
-fs.mkdirp(argv.out)
+fs.mkdirp(argv.out as string)
 
 const contentTypes = argv.contentType && (Array.isArray(argv.contentType) ? argv.contentType : [argv.contentType])
 
 Run({
-  from: argv.from,
-  out: argv.out,
-  to: argv.to,
-  managementToken: argv.token || process.env.CONTENTFUL_MANAGEMENT_TOKEN,
-  oneFile: argv.oneFile,
+  from: argv.from as string,
+  out: argv.out as string,
+  to: argv.to as string,
+  managementToken: (argv.token || process.env.CONTENTFUL_MANAGEMENT_TOKEN) as string,
+  oneFile: argv.oneFile as boolean,
   contentTypes,
 })
-  .then((files) => {
-    files.forEach((file) => console.log(file))
-  })
-  .catch((err) => {
-    console.error(err)
-  })
+  .then((files) => files.forEach((file) => console.log(file)))
+  .catch(console.error)
