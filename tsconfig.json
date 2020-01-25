@@ -5,6 +5,7 @@
     "outDir": "dist",
     "noImplicitAny": true,
     "strictFunctionTypes": true,
+    "moduleResolution": "node",
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
@@ -17,6 +18,7 @@
     "src/**/*.ts"
   ],
   "exclude": [
+    "node_modules/**/*",
     "src/**/*.test.ts"
   ]
 }

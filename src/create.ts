@@ -1,6 +1,6 @@
 import { IContentType } from './model'
-import { IContext } from './runners'
 import { AsyncWrite } from './runners/async_writer'
+import { IContext } from './runners/index'
 import { dump } from './utils/object'
 import { camelCase } from './utils/string'
 

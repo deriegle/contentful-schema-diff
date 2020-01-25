@@ -1,6 +1,6 @@
 import { FieldType } from '../model'
 import { writeModify } from '../modify'
-import { IContext } from '../runners'
+import { IContext } from '../runners/index'
 import { fakeContentType, fakeField } from '../test-support'
 
 const fromType = fakeContentType(

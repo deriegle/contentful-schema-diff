@@ -1,5 +1,5 @@
 import { writeCreate } from '../create'
-import { IContentType, FieldType } from '../model'
+import { FieldType, IContentType } from '../model'
 
 const contentType: IContentType = {
   sys: {
