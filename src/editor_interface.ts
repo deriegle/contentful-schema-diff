@@ -1,15 +1,16 @@
 import * as _ from 'lodash'
 import { IEditorInterface } from './model'
 import { IContext } from './runners'
-import { eachInSequence, extendPrototypes } from './utils'
-extendPrototypes()
+import { eachInSequence } from './utils'
+import { dump } from './utils/object'
+import { camelCase } from './utils/string'
 
 export async function writeEditorInterfaceChange(
-      from: IEditorInterface | null,
-      to: IEditorInterface,
-      write: (chunk: string) => Promise<any>,
-      context?: IContext,
-    ): Promise<void> {
+  from: IEditorInterface | null,
+  to: IEditorInterface,
+  write: (chunk: string) => Promise<any>,
+  context?: IContext,
+): Promise<void> {
 
   let fieldsToWrite = to.controls
   if (from) {
@@ -39,7 +40,7 @@ export async function writeEditorInterfaceChange(
 
   const ctx = context || {}
   if (!ctx.varname) {
-    const v = to.sys.contentType.sys.id.camelCase()
+    const v = camelCase(to.sys.contentType.sys.id)
     await write(`
   var ${v} = migration.editContentType('${to.sys.contentType.sys.id}')
 `)
@@ -51,7 +52,7 @@ export async function writeEditorInterfaceChange(
   ${ctx.varname}.changeFieldControl('${field.fieldId}', '${field.widgetNamespace}', '${field.widgetId}'`)
 
     if (field.settings) {
-      await write(`, ${field.settings.dump()}`)
+      await write(`, ${dump(field.settings)}`)
     }
 
     await write(`)

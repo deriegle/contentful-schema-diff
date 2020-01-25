@@ -1,45 +1,4 @@
-import { exec } from 'child_process'
-import * as path from 'path'
-import * as util from 'util'
 import { IContentType } from './model'
-
-declare global {
-  // tslint:disable interface-name
-  interface String {
-    camelCase(): string
-    underscore(): string
-  }
-
-  interface Object {
-    dump(): string
-  }
-  // tslint:enable interface-name
-}
-
-const applied = false
-export function extendPrototypes() {
-  if (applied) {
-    return
-  }
-
-  Object.prototype.dump = function(this: any): string {
-    return util.inspect(this, {
-      depth: null,
-      maxArrayLength: null,
-      breakLength: 0,
-    })
-  }
-
-  String.prototype.camelCase = function(this: string) {
-    return this.toLowerCase().replace(/-(.)/g, (match, group1) =>
-      group1.toUpperCase(),
-    )
-  }
-
-  String.prototype.underscore = function(this: string) {
-    return this.replace(/([A-Z])/g, (m: string) => '_' + m.toLowerCase())
-  }
-}
 
 export function indexById(
   types: IContentType[],

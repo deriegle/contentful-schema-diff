@@ -1,10 +1,9 @@
-import { WriteStream } from 'fs'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 
 import { IContext } from '.'
-import { extendPrototypes, wait } from '../utils'
-extendPrototypes()
+import { wait } from '../utils'
+import { underscore } from '../utils/string'
 import { AsyncWrite, asyncWriter } from './async_writer'
 
 export class FilePerContentTypeRunner {
@@ -53,7 +52,7 @@ export class FilePerContentTypeRunner {
       // don't open the file stream until first write
       if (!stream) {
         const timestamp = new Date().toISOString().replace(/[^\d]/g, '').substring(0, 14)
-        fileName = path.join(this.outDir, `${timestamp}_generated_diff_${id.underscore()}.ts`)
+        fileName = path.join(this.outDir, `${timestamp}_generated_diff_${underscore(id)}.ts`)
         stream = fs.createWriteStream(fileName)
         writer = asyncWriter(stream)
         this.streams.push({ stream, writer, fileName })
