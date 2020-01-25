@@ -23,14 +23,15 @@ interface IContentLink {
 }
 
 export default class ContentLink {
-  public id: string
-  public name: string
-  public required: boolean
-  public disabled: boolean
-  public localized: boolean
-  public omitted: boolean
-  public appearance: IContentFieldAppearance | null
-  public relationship: {
+  public readonly id: string
+  public readonly name: string
+  public readonly required: boolean
+  public readonly disabled: boolean
+  public readonly localized: boolean
+  public readonly omitted: boolean
+  public readonly appearance: IContentFieldAppearance | null
+  public readonly linkType: 'Entry' | 'Asset' | null
+  public readonly relationship: {
     contentType: ContentType,
     type: ContentRelationship,
   }
@@ -38,7 +39,6 @@ export default class ContentLink {
   // tslint:disable: variable-name
   private _items: IContentFieldItems | null
   private _validations: IValidation[]
-  private linkType: 'Entry' | 'Asset' | null
   // tslint:enable: variable-name
 
   constructor({
@@ -104,6 +104,10 @@ export default class ContentLink {
         },
       ],
     })
+  }
+
+  public get options() {
+    return []
   }
 
   public toJSON(): IContentFieldJSON {

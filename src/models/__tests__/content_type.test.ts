@@ -1,10 +1,23 @@
 import { FieldType } from '../../model'
 import ContentField from '../content_field'
+import ContentLink, { ContentRelationship } from '../content_link'
 import ContentType from '../content_type'
 
 const contentType = new ContentType({
   id: 'hero',
   name: 'Hero',
+  fields: [
+    new ContentField({
+      id: 'test',
+      name: 'Test',
+      type: FieldType.Symbol,
+    }),
+  ],
+})
+
+const imageTout = new ContentType({
+  id: 'imageTout',
+  name: 'Image Tout',
   fields: [
     new ContentField({
       id: 'test',
@@ -26,6 +39,31 @@ describe('Content Type', () => {
   it('getField works', () => {
     expect(contentType.getField('test')).toBeInstanceOf(ContentField)
     expect(contentType.getField('blah')).toBeNull()
+  })
+
+  it('allows ContentLink and ContentField fields', () => {
+    const subject = new ContentType({
+      id: 'imageToutSection',
+      name: 'Image Tout Section',
+      fields: [
+        new ContentField({
+          id: 'headline',
+          name: 'Headline Text',
+          type: FieldType.Symbol,
+          required: true,
+        }),
+        new ContentLink({
+          id: 'imageTouts',
+          name: 'Image Touts',
+          contentType: imageTout,
+          relationship: ContentRelationship.hasMany,
+        }),
+      ],
+    })
+
+    expect(subject.fields.length).toBe(2)
+    expect(subject.getField('headline')).toBeInstanceOf(ContentField)
+    expect(subject.getField('imageTouts')).toBeInstanceOf(ContentLink)
   })
 
   it('toJSON returns correctly', () => {

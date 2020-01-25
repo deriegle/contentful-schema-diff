@@ -9,22 +9,28 @@ const imageTout = new ContentType({
 })
 
 describe('Content Link', () => {
-  // it.skip('allows the correct values and sets the right defaults', () => {
-  //   const contentLink = new ContentLink({
-  //     id: 'test',
-  //     name: 'Test',
-  //   })
+  it('allows the correct values and sets the right defaults', () => {
+    const contentLink = new ContentLink({
+      id: 'test',
+      name: 'Test',
+      relationship: ContentRelationship.hasMany,
+      contentType: imageTout,
+    })
 
-  //   expect(contentLink.id).toBe('test')
-  //   expect(contentLink.name).toBe('Test')
-  //   expect(contentLink.type).toBe(FieldType.Symbol)
-  //   expect(contentLink.disabled).toBe(false)
-  //   expect(contentLink.required).toBe(false)
-  //   expect(contentLink.omitted).toBe(false)
-  //   expect(contentLink.localized).toBe(false)
-  //   expect(contentLink.validations.length).toBe(0)
-  //   expect(contentLink.items).toBeNull()
-  // })
+    expect(contentLink.id).toBe('test')
+    expect(contentLink.name).toBe('Test')
+    expect(contentLink.type).toBe(FieldType.Array)
+    expect(contentLink.disabled).toBe(false)
+    expect(contentLink.required).toBe(false)
+    expect(contentLink.omitted).toBe(false)
+    expect(contentLink.localized).toBe(false)
+    expect(contentLink.validations.length).toBe(0)
+    expect(contentLink.items?.linkType).toBe('Entry')
+    expect(contentLink.items?.type).toBe(FieldType.Link)
+    expect(contentLink.items?.validations).toContainEqual({
+      linkContentType: [imageTout.id],
+    })
+  })
 
   it('toJSON works with hasMany', () => {
     const contentLink = new ContentLink({
