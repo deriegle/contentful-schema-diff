@@ -1,7 +1,5 @@
-import test from 'ava'
-
-import {writeCreate} from './create'
-import {IContentType} from './model'
+import { writeCreate } from '../create'
+import { IContentType } from '../model'
 
 const contentType: IContentType = {
   sys: {
@@ -52,7 +50,8 @@ const contentType: IContentType = {
   },
   displayField: 'name',
   name: 'Menu',
-  description: 'A Menu contains a number of Menu Buttons or other Menus, which will be rendered as drop-downs.',
+  description:
+    'A Menu contains a number of Menu Buttons or other Menus, which will be rendered as drop-downs.',
   fields: [
     {
       id: 'name',
@@ -60,8 +59,7 @@ const contentType: IContentType = {
       type: 'Symbol',
       localized: false,
       required: true,
-      validations: [
-      ],
+      validations: [],
       disabled: false,
       omitted: false,
     },
@@ -73,9 +71,7 @@ const contentType: IContentType = {
       required: false,
       validations: [
         {
-          linkContentType: [
-            'menuButton',
-          ],
+          linkContentType: ['menuButton'],
           message: 'The Top Button must be a button linking to a...',
         },
       ],
@@ -89,18 +85,14 @@ const contentType: IContentType = {
       type: 'Array',
       localized: false,
       required: false,
-      validations: [
-      ],
+      validations: [],
       disabled: false,
       omitted: false,
       items: {
         type: 'Link',
         validations: [
           {
-            linkContentType: [
-              'menu',
-              'menuButton',
-            ],
+            linkContentType: ['menu', 'menuButton'],
             message: 'The items must be either buttons or drop-down menus',
           },
         ],
@@ -115,9 +107,7 @@ const contentType: IContentType = {
       required: false,
       validations: [
         {
-          linkContentType: [
-            'menu',
-          ],
+          linkContentType: ['menu'],
           message: 'The Side Menu must be a Menu',
         },
       ],
@@ -128,24 +118,27 @@ const contentType: IContentType = {
   ],
 }
 
-test('dumps content type', async (t) => {
-  const chunks: string[] = []
+describe('Create', () => {
+  test('dumps content type', async () => {
+    const chunks: string[] = []
 
-  await writeCreate(contentType, async (chunk) => chunks.push(chunk), {})
+    await writeCreate(contentType, async (chunk) => chunks.push(chunk), {})
 
-  const written = chunks.join('')
-  t.regex(written, /migration\.createContentType\('menu/)
-  t.regex(written, /displayField:\s+'name'/)
-  t.regex(written, /name:\s+'Menu'/)
-  t.regex(written, /description:\s+'A Menu contains/)
-})
+    const written = chunks.join('')
 
-test('dumps simple fields', async (t) => {
-  const chunks: string[] = []
+    expect(written).toMatch(/migration\.createContentType\('menu/)
+    expect(written).toMatch(/displayField:\s+'name'/)
+    expect(written).toMatch(/name:\s+'Menu'/)
+    expect(written).toMatch(/description:\s+'A Menu contains/)
+  })
 
-  await writeCreate(contentType, async (chunk) => chunks.push(chunk), {})
+  test('dumps simple fields', async () => {
+    const chunks: string[] = []
 
-  const written = chunks.join('')
-  t.regex(written, /menu\.createField\('name/)
-  t.regex(written, /name:\s+'Menu Name'/)
+    await writeCreate(contentType, async (chunk) => chunks.push(chunk), {})
+
+    const written = chunks.join('')
+    expect(written).toMatch(/menu\.createField\('name/)
+    expect(written).toMatch(/name:\s+'Menu Name'/)
+  })
 })

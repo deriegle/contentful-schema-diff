@@ -18,7 +18,9 @@ declare global {
 
 const applied = false
 export function extendPrototypes() {
-  if (applied) { return }
+  if (applied) {
+    return
+  }
 
   Object.prototype.dump = function(this: any): string {
     return util.inspect(this, {
@@ -29,10 +31,9 @@ export function extendPrototypes() {
   }
 
   String.prototype.camelCase = function(this: string) {
-    return this.toLowerCase()
-      .replace(/-(.)/g, (match, group1) =>
-        group1.toUpperCase(),
-      )
+    return this.toLowerCase().replace(/-(.)/g, (match, group1) =>
+      group1.toUpperCase(),
+    )
   }
 
   String.prototype.underscore = function(this: string) {
@@ -40,7 +41,9 @@ export function extendPrototypes() {
   }
 }
 
-export function indexById(types: IContentType[]): { [id: string]: IContentType } {
+export function indexById(
+  types: IContentType[],
+): { [id: string]: IContentType } {
   const ret: any = {}
   types.forEach((type) => {
     ret[type.sys.id] = type
@@ -62,23 +65,10 @@ export function wait(ms: number): Promise<void> {
   })
 }
 
-export function formatFile(file: string): Promise<void> {
-  const prettierBinLocation = path.join(require.resolve('prettier'), '../bin-prettier.js')
-
-  return new Promise((resolve, reject) => {
-    exec(`${prettierBinLocation} --write ${file}`, (err, stdout, stderr) => {
-      if (err) {
-        reject(err.message + '\n\t' + stderr)
-      } else {
-        resolve()
-      }
-    })
-  })
-}
-
 export async function eachInSequence<T, U>(
-    items: T[],
-    op: (item: T, index?: number, items?: T[]) => Promise<U>): Promise<U[]> {
+  items: T[],
+  op: (item: T, index?: number, items?: T[]) => Promise<U>,
+): Promise<U[]> {
   const ret: U[] = []
   for (let i = 0; i < items.length; i++) {
     ret.push(await op(items[i], i, items))
