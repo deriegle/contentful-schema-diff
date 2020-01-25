@@ -1,8 +1,8 @@
 import { FieldType } from '../../model'
+import AssetLink from '../asset_link'
 import ContentField from '../content_field'
 import ContentLink, { ContentRelationship } from '../content_link'
 import ContentType from '../content_type'
-import AssetLink from '../asset_link'
 
 const contentType = new ContentType({
   id: 'hero',
