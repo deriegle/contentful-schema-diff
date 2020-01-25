@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import { IEditorInterface } from './model'
-import { IContext } from './runners'
+import { IContext } from './runners/index'
 import { eachInSequence } from './utils'
 import { dump } from './utils/object'
 import { camelCase } from './utils/string'

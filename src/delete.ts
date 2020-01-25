@@ -1,5 +1,5 @@
-import { IContext } from './runners'
 import { AsyncWrite } from './runners/async_writer'
+import { IContext } from './runners/index'
 
 export class DeleteContentType {
   public static writeDelete(id: string, write: AsyncWrite, context?: IContext): Promise<void> {
