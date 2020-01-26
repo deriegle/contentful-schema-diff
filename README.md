@@ -254,7 +254,7 @@ Example:
 
 ```js
 // RichTextSection.js
-import { ContentType, ContentField } from '<this-package>';
+import { ContentType, ContentField, FieldType } from '<this-package>';
 
 export const RichTextSection = new ContentType({
   id: 'richTextSection',
@@ -263,7 +263,7 @@ export const RichTextSection = new ContentType({
     new ContentField({
       id: 'content',
       name: 'Rich Text Content',
-      type: ContentField.RichText,
+      type: FieldType.RichText,
       required: true,
     }),
   ],
