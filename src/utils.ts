@@ -1,36 +1,41 @@
-import { IContentType } from './model'
+import { IContentType, IEditorInterface } from './model'
 
-export function indexById(
-  types: IContentType[],
-): { [id: string]: IContentType } {
-  const ret: any = {}
-  types.forEach((type) => {
-    ret[type.sys.id] = type
-  })
+interface IIndexedById {
+  [id: string]: IContentType
+}
+
+interface IIndexedByContentType<T> {
+  [id: string]: T
+}
+
+type EachSequenceOperation<T, U> = (item: T) => Promise<U>
+
+export function indexById(types: IContentType[]): IIndexedById {
+  const ret: IIndexedById = {}
+
+  types.forEach((type) => ret[type.sys.id] = type)
+
   return ret
 }
 
-export function indexByContentType<T>(items: T[]): { [id: string]: T } {
-  const ret: any = {}
-  items.forEach((item: any) => {
-    ret[item.sys.contentType.sys.id] = item
-  })
+export function indexByContentType(items: IEditorInterface[]): IIndexedByContentType<IEditorInterface> {
+  const ret: IIndexedByContentType<IEditorInterface> = {}
+
+  items.forEach((item: IEditorInterface) => ret[item.sys.contentType.sys.id] = item)
+
   return ret
 }
 
 export function wait(ms: number): Promise<void> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => resolve(), ms)
-  })
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export async function eachInSequence<T, U>(
-  items: T[],
-  op: (item: T, index?: number, items?: T[]) => Promise<U>,
-): Promise<U[]> {
+export async function eachInSequence<T, U>(items: T[], op: EachSequenceOperation<T, U>): Promise<U[]> {
   const ret: U[] = []
-  for (let i = 0; i < items.length; i++) {
-    ret.push(await op(items[i], i, items))
+
+  for (const item of items) {
+    ret.push(await op(item))
   }
+
   return ret
 }

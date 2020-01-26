@@ -256,7 +256,7 @@ Example:
 // RichTextSection.js
 import { ContentType, ContentField, FieldType } from '<this-package>';
 
-export const RichTextSection = new ContentType({
+export default new ContentType({
   id: 'richTextSection',
   name: 'Rich Text Section',
   fields: [
@@ -274,7 +274,7 @@ export const RichTextSection = new ContentType({
 // ImageSection.js
 import { ContentType, AssetLink, ContentRelationship } from '<this-package>';
 
-export const ImageSection = new ContentType({
+export default new ContentType({
   id: 'imageSection',
   name: 'Image Section',
   fields: [
@@ -286,7 +286,6 @@ export const ImageSection = new ContentType({
     }),
   ],
 })
-
 ```
 
 ```js
@@ -295,7 +294,7 @@ import { ContentType, FieldType, ContentField, ContentRelationship } from '<this
 import RichTextSection from './rich-text-section';
 import ImageSection from './image-section';
 
-export const Page = new ContentType({
+export default new ContentType({
   id: 'page',
   name: 'Page',
   description: 'Basic Page type',
