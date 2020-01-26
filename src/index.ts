@@ -10,27 +10,39 @@ const argv = yargs
   .option('from', {
     alias: 'f',
     demandOption: true,
+    type: 'string',
     description: 'A contentful export file, or Contentful Space ID',
+  })
+  .option('modelsDir', {
+    alias: 'm',
+    type: 'string',
+    description: 'Provide a models directory to use in place of "to"',
   })
   .option('to', {
     alias: 't',
     demandOption: true,
+    type: 'string',
     description: 'A contentful export file, space ID, or environment within the "from" space',
   })
   .option('content-type', {
     alias: 'c',
+    type: 'string',
     description: 'Generate a migration only for this content type.  Repeat to select multiple types.',
   })
   .option('out', {
     alias: 'o',
+    type: 'string',
     description: 'The output directory (or file if "--one-file" was specified) in which to place the migration',
   })
   .option('token', {
     alias: 'a',
+    type: 'string',
     description: 'A Contentful management token to download content types from a space',
   })
-  .option('one-file', {
+  .option('oneFile', {
+    alias: 'one-file',
     description: 'Write all the migrations in a single file',
+    type: 'boolean',
   })
   .argv
 
@@ -41,16 +53,18 @@ if (!argv.out) {
     argv.out = './'
   }
 }
+
 fs.mkdirp(argv.out as string)
 
 const contentTypes = argv.contentType && (Array.isArray(argv.contentType) ? argv.contentType : [argv.contentType])
 
 Run({
-  from: argv.from as string,
-  out: argv.out as string,
-  to: argv.to as string,
-  managementToken: (argv.token || process.env.CONTENTFUL_MANAGEMENT_TOKEN) as string,
-  oneFile: argv.oneFile as boolean,
+  from: argv.from,
+  out: argv.out,
+  to: argv.to,
+  modelsDirectory: argv.modelsDir,
+  managementToken: (argv.token || process.env.CONTENTFUL_MANAGEMENT_TOKEN),
+  oneFile: argv.oneFile,
   contentTypes,
 })
   .then((files) => files.forEach((file) => console.log(file)))

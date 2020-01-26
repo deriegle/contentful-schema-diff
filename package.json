@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "coverage": "jest --collectCoverage --coverageDirectory coverage && open coverage/lcov-report/index.html",
+    "coverage": "jest --collectCoverage --coverageDirectory coverage --collectCoverageFrom 'src/**/*.ts' && open coverage/lcov-report/index.html",
     "lint": "tslint 'src/**/*.ts'",
     "prepare": "yarn run build",
     "test": "jest",

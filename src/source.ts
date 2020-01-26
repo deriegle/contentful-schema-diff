@@ -2,7 +2,6 @@ import * as fs from 'fs-extra'
 
 import { IArgs } from './main'
 import { IContentType, IEditorInterface } from './model'
-import { eachInSequence } from './utils'
 
 const { createClient } = require('contentful-management')
 
@@ -12,71 +11,82 @@ export interface ISource {
   editorInterfaces: IEditorInterface[]
 }
 
-export function loadSources(args: IArgs): Promise<ISource[]> {
-  return Promise.all([loadSource(args.from, args), loadSource(args.to, args)])
-}
+export default class Source {
+  public static loadSources(args: IArgs): Promise<ISource[]> {
+    return Promise.all([
+      this.loadSource(args.from, args),
+      this.loadSource(args.to, args),
+    ])
+  }
 
-async function loadSource(source: string, args: IArgs): Promise<ISource> {
-  let contentTypes: any[]
-  let editorInterfaces: IEditorInterface[]
+  private static async loadSource(source: string, args: IArgs): Promise<ISource> {
+    let contentTypes: any[]
+    let editorInterfaces: IEditorInterface[]
 
-  if (await fs.pathExists(source)) {
-    const contents = await fs.readFile(source)
-    const parsed = JSON.parse(contents.toString())
-    contentTypes = parsed.contentTypes
-    editorInterfaces = parsed.editorInterfaces
-  } else {
-    // get from space
-    if (!args.managementToken) {
-      throw new Error(
-        `${source} is not a file and I don't have a management token to talk to contentful.`,
-      )
+    if (await fs.pathExists(source)) {
+      const contents = await fs.readFile(source)
+      const parsedJSON = JSON.parse(contents.toString())
+
+      contentTypes = parsedJSON.contentTypes
+      editorInterfaces = parsedJSON.editorInterfaces
+    } else {
+      [contentTypes, editorInterfaces] = await this.loadFromContentful(source, args)
     }
 
-    const client = createClient({
-      accessToken: args.managementToken,
-    })
+    return {
+      id: source,
+      contentTypes,
+      editorInterfaces,
+    }
+  }
 
-    let { spaceId, envId } = parseEnv(source)
-    let env: any
+  private static async loadFromContentful(source: string, args: IArgs) {
+    if (!args.managementToken) {
+      throw new Error(`${source} is not a file and no management token was provided to load from Contentful`)
+    }
+
+    const env: any = await this.getContentfulEnvironment(source, args)
+    let contentTypes: any[] = (await env.getContentTypes()).items
+
+    if (args.contentTypes && args.contentTypes.length > 0) {
+      // User has provided specific contentTypes they want to migrate
+      contentTypes = contentTypes.filter((ct) => args.contentTypes.includes(ct.sys.id))
+    }
+
+    const editorInterfaces: IEditorInterface[] = contentTypes.map<any>(async (ct) => await ct.getEditorInterface())
+
+    return [contentTypes, editorInterfaces]
+  }
+
+  private static async getContentfulEnvironment(source: string, args: IArgs) {
+    const { spaceId, envId } = this.parseEnv(source)
+
+    const client = createClient({ accessToken: args.managementToken })
+
     try {
       const space = await client.getSpace(spaceId)
-      env = await space.getEnvironment(envId)
+      return await space.getEnvironment(envId)
     } catch (e) {
       // the source may not be a space - it might be an environment on the '--from' space
-      if (args.from == source) {
+
+      if (args.from === source) {
+        // We are already pulling for the "from" space
         throw e
       }
-      // we're loading the args.to
 
-      spaceId = parseEnv(args.from).spaceId
-      envId = source
-      const space = await client.getSpace(spaceId)
-      env = await space.getEnvironment(envId)
+      const fromSpaceId = this.parseEnv(args.from).spaceId
+      const toEnvironment = source
+
+      const space = await client.getSpace(fromSpaceId)
+      return await space.getEnvironment(toEnvironment)
     }
+  }
 
-    contentTypes = (await env.getContentTypes()).items
-    if (args.contentTypes && args.contentTypes.length > 0) {
-      contentTypes = contentTypes.filter(
-        (ct) => args.contentTypes.indexOf(ct.sys.id) >= 0,
-      )
+  private static parseEnv(source: string): { spaceId: string; envId: string } {
+    const parts = source.split('/')
+    return {
+      spaceId: parts[0],
+      envId: parts.length > 1 ? parts[1] : 'master',
     }
-    editorInterfaces = await eachInSequence(
-      contentTypes,
-      (ct: any) => ct.getEditorInterface() as Promise<IEditorInterface>,
-    )
-  }
-  return {
-    id: source,
-    contentTypes,
-    editorInterfaces,
-  }
-}
-
-function parseEnv(source: string): { spaceId: string; envId: string } {
-  const parts = source.split('/')
-  return {
-    spaceId: parts[0],
-    envId: parts.length > 1 ? parts[1] : 'master',
   }
 }
