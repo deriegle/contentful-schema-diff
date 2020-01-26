@@ -81,6 +81,7 @@ export enum FieldType {
   Integer = 'Integer',
   Number = 'Number',
   Date = 'Date',
+  RichText = 'RichText',
   Object = 'Object',
   Location = 'Location',
   Array = 'Array',

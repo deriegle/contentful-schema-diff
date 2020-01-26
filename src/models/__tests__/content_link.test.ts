@@ -8,6 +8,12 @@ const imageTout = new ContentType({
   fields: [],
 })
 
+const testSection = new ContentType({
+  id: 'testSection',
+  name: 'Test Section',
+  fields: [],
+})
+
 describe('Content Link', () => {
   it('allows the correct values and sets the right defaults', () => {
     const contentLink = new ContentLink({
@@ -62,6 +68,39 @@ describe('Content Link', () => {
     })
   })
 
+  it('toJSON works with multiple content types hasMany', () => {
+    const contentLink = new ContentLink({
+      id: 'blocks',
+      name: 'Blocks',
+      relationship: ContentRelationship.hasMany,
+      contentTypes: [
+        imageTout,
+        testSection,
+      ],
+    })
+
+    expect(contentLink.toJSON()).toEqual({
+      id: contentLink.id,
+      name: contentLink.name,
+      type: FieldType.Array,
+      omitted: false,
+      required: false,
+      items: {
+        linkType: 'Entry',
+        type: FieldType.Link,
+        validations: [
+          {
+            linkContentType: [imageTout.id, testSection.id],
+          },
+        ],
+      },
+      linkType: null,
+      validations: [],
+      disabled: false,
+      localized: false,
+    })
+  })
+
   it('toJSON works with hasOne', () => {
     const contentLink = new ContentLink({
       id: 'imageTout',
@@ -87,4 +126,5 @@ describe('Content Link', () => {
       localized: false,
     })
   })
+
 })

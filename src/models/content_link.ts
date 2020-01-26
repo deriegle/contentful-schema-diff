@@ -10,7 +10,8 @@ export enum ContentRelationship {
 interface IContentLink {
   id: string,
   name: string,
-  contentType: ContentType,
+  contentType?: ContentType,
+  contentTypes?: ContentType[],
   relationship: ContentRelationship
   validations?: IValidation[],
   localized?: boolean,
@@ -31,7 +32,7 @@ export default class ContentLink {
   public readonly appearance: IContentFieldAppearance | null
   public readonly linkType: 'Entry' = 'Entry'
   public readonly relationship: {
-    contentType: ContentType,
+    contentTypes: ContentType[] | null,
     type: ContentRelationship,
   }
 
@@ -44,6 +45,7 @@ export default class ContentLink {
     id,
     name,
     contentType,
+    contentTypes,
     relationship,
     required,
     omitted,
@@ -62,18 +64,21 @@ export default class ContentLink {
     this._validations = validations || []
     this.appearance = appearance || null
     this._items = items || null
+
+    const relationshipContentTypes = contentTypes || (contentType ? [contentType] : null)
+
     this.relationship = {
-      contentType,
+      contentTypes: relationshipContentTypes,
       type: relationship,
     }
   }
 
   public get validations(): IValidation[] {
-    if (this.isArray) { return this._validations }
+    if (this.isArray || !this.relationship.contentTypes?.length) { return this._validations }
 
     return this._validations.concat([
       {
-        linkContentType: [this.relationship.contentType.id],
+        linkContentType: this.relationship.contentTypes.map((ct) => ct.id),
       },
     ])
   }
@@ -92,15 +97,19 @@ export default class ContentLink {
   public get items(): IContentFieldItems | null {
     if (!this.isArray) { return null }
 
-    return Object.assign<object, IContentFieldItems>(this._items || {}, {
+    const validations = this._items?.validations || []
+
+    if (this.relationship.contentTypes?.length) {
+      validations.push({
+        linkContentType: this.relationship.contentTypes.map((ct) => ct.id),
+      })
+    }
+
+    return {
       linkType: this.linkType,
       type: FieldType.Link,
-      validations: [
-        {
-          linkContentType: [this.relationship.contentType.id],
-        },
-      ],
-    })
+      validations,
+    }
   }
 
   public get options() {
