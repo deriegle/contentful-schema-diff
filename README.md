@@ -253,7 +253,7 @@ export = function(migration : Migration) {
 Example:
 
 ```js
-// Page.js
+// RichTextSection.js
 import { ContentType, ContentField } from '<this-package>';
 
 export const RichTextSection = new ContentType({
@@ -268,6 +268,24 @@ export const RichTextSection = new ContentType({
     }),
   ],
 })
+```
+
+```js
+// ImageSection.js
+import { ContentType, AssetLink, ContentRelationship } from '<this-package>';
+
+export const ImageSection = new ContentType({
+  id: 'imageSection',
+  name: 'Image Section',
+  fields: [
+    new AssetLink({
+      id: 'image',
+      name: 'Image',
+      relationship: ContentRelationship.hasOne,
+      required: true,
+    }),
+  ],
+})
 
 ```
 
@@ -275,6 +293,7 @@ export const RichTextSection = new ContentType({
 // Page.js
 import { ContentType, FieldType, ContentField, ContentRelationship } from '<this-package>';
 import RichTextSection from './rich-text-section';
+import ImageSection from './image-section';
 
 export const Page = new ContentType({
   id: 'page',
@@ -295,6 +314,7 @@ export const Page = new ContentType({
         // Add your content types, that you want to be able to link.
         // The validation will be added automatically when you create your migrations
         RichTextSection,
+        ImageSection,
       ],
       relationship: ContentRelationship.hasMany,
       required: true,
