@@ -1,0 +1,27 @@
+{
+  "contentTypes": [
+    {
+      "id": "page",
+      "name": "Page",
+      "description": "Basic Page",
+      "displayField": "title",
+      "fields": [
+        {
+          "id": "title",
+          "name": "Page title",
+          "type": "Text",
+          "required": true
+        },
+        {
+          "id": "blocks",
+          "type": "Array",
+          "items": {
+            "type": "Link",
+            "linkType": "Entry"
+          }
+        }
+      ]
+    }
+  ],
+  "editorInterfaces": []
+}
