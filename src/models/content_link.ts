@@ -32,7 +32,7 @@ export default class ContentLink {
   public readonly appearance: IContentFieldAppearance | null
   public readonly linkType: 'Entry' = 'Entry'
   public readonly relationship: {
-    contentType: ContentType | null,
+    contentTypes: ContentType[] | null,
     type: ContentRelationship,
   }
 
@@ -45,6 +45,7 @@ export default class ContentLink {
     id,
     name,
     contentType,
+    contentTypes,
     relationship,
     required,
     omitted,
@@ -63,18 +64,21 @@ export default class ContentLink {
     this._validations = validations || []
     this.appearance = appearance || null
     this._items = items || null
+
+    const relationshipContentTypes = contentTypes || (contentType ? [contentType] : null)
+
     this.relationship = {
-      contentType: contentType || null,
+      contentTypes: relationshipContentTypes,
       type: relationship,
     }
   }
 
   public get validations(): IValidation[] {
-    if (this.isArray || !this.relationship.contentType) { return this._validations }
+    if (this.isArray || !this.relationship.contentTypes?.length) { return this._validations }
 
     return this._validations.concat([
       {
-        linkContentType: [this.relationship.contentType.id],
+        linkContentType: this.relationship.contentTypes.map((ct) => ct.id),
       },
     ])
   }
@@ -95,9 +99,9 @@ export default class ContentLink {
 
     const validations = this._items?.validations || []
 
-    if (this.relationship.contentType) {
+    if (this.relationship.contentTypes?.length) {
       validations.push({
-        linkContentType: [this.relationship.contentType.id],
+        linkContentType: this.relationship.contentTypes.map((ct) => ct.id),
       })
     }
 
