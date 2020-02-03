@@ -1,9 +1,15 @@
 import * as fs from 'fs-extra'
 
+import ClassModelsLoader from './class-models-loader'
 import { IArgs } from './main'
 import { IContentType, IEditorInterface } from './model'
 
 const { createClient } = require('contentful-management')
+
+enum SourceType {
+  FROM,
+  TO
+}
 
 export interface ISource {
   id: string
@@ -14,16 +20,20 @@ export interface ISource {
 export default class Source {
   public static loadSources(args: IArgs): Promise<ISource[]> {
     return Promise.all([
-      this.loadSource(args.from, args),
-      this.loadSource(args.to, args),
+      this.loadSource(args.from, args, SourceType.FROM),
+      this.loadSource(args.to, args, SourceType.TO),
     ])
   }
 
-  private static async loadSource(source: string, args: IArgs): Promise<ISource> {
+  private static async loadSource(source: string, args: IArgs, sourceType: SourceType): Promise<ISource> {
     let contentTypes: any[]
     let editorInterfaces: IEditorInterface[]
 
-    if (await fs.pathExists(source)) {
+    if (args.modelsDirectory && sourceType === SourceType.FROM) {
+      contentTypes = await new ClassModelsLoader(args.modelsDirectory).loadModels()
+      // TODO: Make these easy to define in the class models
+      editorInterfaces = []
+    } else if (await fs.pathExists(source)) {
       const contents = await fs.readFile(source)
       const parsedJSON = JSON.parse(contents.toString())
 
